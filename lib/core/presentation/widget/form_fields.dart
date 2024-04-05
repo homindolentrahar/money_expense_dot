@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:money_expense_dot/core/domain/model/expense_category_constant.dart';
+import 'package:money_expense_dot/core/domain/model/expense_category_model.dart';
 
 InputBorder _getBorder(BuildContext context) => OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
@@ -37,6 +37,8 @@ class FormFieldText extends StatelessWidget {
   final String hint;
   final Widget? suffixIcon;
   final bool isRequired;
+  final dynamic Function(String?)? valueTransformer;
+  final List<TextInputFormatter>? inputFormatters;
   final List<FormFieldValidator?>? validators;
   final TextInputAction action;
   final TextInputType keyboardType;
@@ -48,6 +50,8 @@ class FormFieldText extends StatelessWidget {
     required this.hint,
     this.suffixIcon,
     this.isRequired = true,
+    this.valueTransformer,
+    this.inputFormatters,
     this.validators,
     this.action = TextInputAction.done,
     this.keyboardType = TextInputType.text,
@@ -60,6 +64,7 @@ class FormFieldText extends StatelessWidget {
       name: name,
       textInputAction: action,
       keyboardType: keyboardType,
+      valueTransformer: valueTransformer,
       validator: FormBuilderValidators.compose([
         if (isRequired) ...[
           FormBuilderValidators.required(),
@@ -69,6 +74,7 @@ class FormFieldText extends StatelessWidget {
           .textTheme
           .bodyMedium
           ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+      inputFormatters: inputFormatters,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: Theme.of(context).textTheme.bodyMedium,

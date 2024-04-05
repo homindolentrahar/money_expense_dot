@@ -12,11 +12,11 @@ abstract class AppRoute {
       ),
       GoRoute(
         path: RoutePaths.add,
-        builder: (ctx, state) => const AddEditPage(),
+        builder: (ctx, state) => AddEditPage.getPage(),
       ),
       GoRoute(
         path: "${RoutePaths.expense}/:id",
-        builder: (ctx, state) => const AddEditPage(),
+        builder: (ctx, state) => AddEditPage.getPage(),
       ),
     ],
   );

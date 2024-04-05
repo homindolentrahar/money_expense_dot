@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:money_expense_dot/core/domain/model/expense_category_constant.dart';
+import 'package:money_expense_dot/core/domain/model/expense_category_model.dart';
 import 'package:money_expense_dot/core/domain/model/expense_model.dart';
 import 'package:money_expense_dot/feature/home/domain/model/expense_with_category_model.dart';
 
