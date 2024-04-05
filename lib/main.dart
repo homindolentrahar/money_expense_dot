@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:money_expense_dot/core/presentation/app_theme.dart';
 import 'package:money_expense_dot/feature/home/presentation/home_page.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MoneyExpenseApp());
 }
 
@@ -10,9 +13,12 @@ class MoneyExpenseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Money Expense DOT',
-      home: HomePage(),
+      theme: AppTheme.lightTheme,
+      themeMode: ThemeMode.light,
+      home: const HomePage(),
     );
   }
 }
