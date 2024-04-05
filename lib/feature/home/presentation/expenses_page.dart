@@ -1,15 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:money_expense_dot/core/domain/model/expense_category_model.dart';
+import 'package:money_expense_dot/core/domain/model/category_model.dart';
+import 'package:money_expense_dot/feature/home/presentation/bloc/expenses_cubit.dart';
+import 'package:money_expense_dot/feature/home/presentation/bloc/expenses_state.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_banner_item.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_category_item.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_list_group.dart';
 import 'package:money_expense_dot/route/app_route.dart';
-import 'package:money_expense_dot/util/constant/dummy_datas.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class ExpensesPage extends StatelessWidget {
+  const ExpensesPage._();
+
+  static Widget getPage() {
+    return BlocProvider(
+      create: (_) => ExpensesCubit(),
+      child: const ExpensesPage._(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,18 +85,25 @@ class HomePage extends StatelessWidget {
                   direction: Axis.horizontal,
                   spacing: 20,
                   children: List.generate(
-                    ExpenseCategoryConstant.categories.length,
+                    CategoryConstant.categories.length,
                     (index) {
                       return ExpenseCategoryItem(
                         amount: 100000,
-                        category: ExpenseCategoryConstant.categories[index],
+                        category: CategoryConstant.categories[index],
                       );
                     },
                   ),
                 ),
               ),
-              ExpenseListGroup(
-                datas: DummyDatas.dummyGrouppedExpensesWithCategory,
+              BlocBuilder<ExpensesCubit, ExpensesState>(
+                builder: (_, state) {
+                  return state.maybeWhen(
+                    orElse: () => const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                    success: (data) => ExpenseListGroup(datas: data),
+                  );
+                },
               ),
             ],
           ),

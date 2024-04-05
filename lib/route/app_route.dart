@@ -1,6 +1,6 @@
 import 'package:go_router/go_router.dart';
 import 'package:money_expense_dot/feature/add_edit/presentation/add_edit_page.dart';
-import 'package:money_expense_dot/feature/home/presentation/home_page.dart';
+import 'package:money_expense_dot/feature/home/presentation/expenses_page.dart';
 
 abstract class AppRoute {
   static final GoRouter router = GoRouter(
@@ -8,7 +8,7 @@ abstract class AppRoute {
     routes: [
       GoRoute(
         path: RoutePaths.initial,
-        builder: (ctx, state) => const HomePage(),
+        builder: (ctx, state) => ExpensesPage.getPage(),
       ),
       GoRoute(
         path: RoutePaths.add,
@@ -16,7 +16,9 @@ abstract class AppRoute {
       ),
       GoRoute(
         path: "${RoutePaths.expense}/:id",
-        builder: (ctx, state) => AddEditPage.getPage(),
+        builder: (ctx, state) {
+          return AddEditPage.getPage();
+        },
       ),
     ],
   );

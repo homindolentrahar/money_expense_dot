@@ -5,7 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:money_expense_dot/core/domain/model/expense_category_model.dart';
+import 'package:money_expense_dot/core/domain/model/category_model.dart';
 
 InputBorder _getBorder(BuildContext context) => OutlineInputBorder(
       borderRadius: BorderRadius.circular(6),
@@ -117,6 +117,7 @@ class FormFieldDatePicker extends StatelessWidget {
       name: name,
       inputType: InputType.date,
       format: DateFormat("EEEE, dd MMMM yyyy"),
+      lastDate: DateTime.now(),
       validator: FormBuilderValidators.compose([
         if (isRequired) ...[
           FormBuilderValidators.required(),
@@ -147,7 +148,7 @@ class FormFieldDatePicker extends StatelessWidget {
 }
 
 class FormFieldCategorySelector extends StatelessWidget {
-  final ExpenseCategoryModel? initialValue;
+  final CategoryModel? initialValue;
   final String name;
   final bool isRequired;
 
@@ -160,8 +161,8 @@ class FormFieldCategorySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FormBuilderField<ExpenseCategoryModel>(
-      initialValue: initialValue ?? ExpenseCategoryConstant.categories.first,
+    return FormBuilderField<CategoryModel>(
+      initialValue: initialValue ?? CategoryConstant.categories.first,
       name: name,
       validator: FormBuilderValidators.compose([
         if (isRequired) ...[
@@ -259,10 +260,9 @@ class FormFieldCategorySelector extends StatelessWidget {
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                         ),
-                        itemCount: ExpenseCategoryConstant.categories.length,
+                        itemCount: CategoryConstant.categories.length,
                         itemBuilder: (ctx, index) {
-                          final item =
-                              ExpenseCategoryConstant.categories[index];
+                          final item = CategoryConstant.categories[index];
 
                           return GestureDetector(
                             onTap: () {

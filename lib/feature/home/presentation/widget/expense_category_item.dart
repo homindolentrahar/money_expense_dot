@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:money_expense_dot/core/domain/model/expense_category_model.dart';
+import 'package:money_expense_dot/core/domain/model/category_model.dart';
 import 'package:money_expense_dot/util/extension/double_ext.dart';
 
 class ExpenseCategoryItem extends StatelessWidget {
-  final ExpenseCategoryModel category;
+  final CategoryModel category;
   final double amount;
 
   const ExpenseCategoryItem({

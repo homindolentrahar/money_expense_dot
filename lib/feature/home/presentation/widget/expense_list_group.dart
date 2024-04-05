@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:money_expense_dot/feature/home/domain/model/expense_with_category_model.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_list_item.dart';
@@ -27,7 +25,6 @@ class ExpenseListGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    log("Data: $datas");
     return ListView.separated(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       shrinkWrap: true,

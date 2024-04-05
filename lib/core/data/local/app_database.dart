@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:money_expense_dot/core/domain/model/category_model.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
@@ -21,6 +22,29 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   int get schemaVersion => 1;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        beforeOpen: (details) async {
+          if (details.wasCreated) {
+            await batch((batch) async {
+              batch.insertAll(
+                categories,
+                CategoryConstant.categories
+                    .map(
+                      (e) => CategoryEntity(
+                        slug: e.slug,
+                        icon: e.icon,
+                        outIcon: e.outIcon,
+                        name: e.name,
+                      ),
+                    )
+                    .toList(),
+              );
+            });
+          }
+        },
+      );
 }
 
 @DataClassName("CategoryEntity")

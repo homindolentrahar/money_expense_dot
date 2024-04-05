@@ -28,6 +28,7 @@ class AddEditPage extends StatelessWidget {
       listener: (_, state) {
         if (state.status == BaseStatus.loading) {
           EasyLoading.show(status: "Creating expense...");
+          context.pop();
         } else if (state.status == BaseStatus.success) {
           EasyLoading.showSuccess("Success creating expense");
         } else if (state.status == BaseStatus.error) {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -31,6 +33,8 @@ class AddEditCubit extends Cubit<AddEditState> {
     final formValue = formKey.currentState?.value ?? {};
     final model = ExpenseModel.fromJson(formValue);
     final result = await _repository.createExpense(model);
+
+    log("Form: $formValue");
 
     result.fold(
       (error) {
