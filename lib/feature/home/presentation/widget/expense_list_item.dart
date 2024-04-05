@@ -35,7 +35,7 @@ class ExpenseListItem extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SvgPicture.asset(data.category.icon, width: 24, height: 24),
+              SvgPicture.asset(data.category.outIcon, width: 24, height: 24),
               const SizedBox(width: 14),
               Text(
                 data.expense.name,

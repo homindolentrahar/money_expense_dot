@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 import 'package:money_expense_dot/core/domain/model/expense_category_constant.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_banner_item.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_category_item.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_list_group.dart';
+import 'package:money_expense_dot/route/app_route.dart';
 import 'package:money_expense_dot/util/constant/dummy_datas.dart';
 
 class HomePage extends StatelessWidget {
@@ -15,7 +17,9 @@ class HomePage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         shape: const CircleBorder(),
         child: SvgPicture.asset("assets/icons/ic_add.svg"),
-        onPressed: () {},
+        onPressed: () {
+          context.push(RoutePaths.add);
+        },
       ),
       body: SafeArea(
         child: SingleChildScrollView(

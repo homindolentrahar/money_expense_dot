@@ -17,7 +17,15 @@ abstract class AppTheme {
       onBackground: AppColor.textPrimary,
       surface: AppColor.background,
       onSurface: AppColor.textPrimary,
-      onTertiary: AppColor.textSecondary,
+      outline: AppColor.outline,
+      outlineVariant: AppColor.textSecondary,
+    ),
+    appBarTheme: const AppBarTheme(
+      titleTextStyle: TextStyle(
+        color: AppColor.textPrimary,
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
     ),
     textTheme: const TextTheme(
       displayLarge: TextStyle(
