@@ -6,6 +6,8 @@ abstract interface class IExpenseRepository {
   Stream<Either<String, Map<DateTime, List<ExpenseWithCategoryModel>>>>
       watchAllExpenses();
 
+  Stream<Either<String, ExpenseWithCategoryModel>> watchSingleExpense(int id);
+
   Stream<Either<String, Map<String, double>>> watchDailyMonthlyExpenses();
 
   Stream<Either<String, Map<CategoryModel, double>>> watchExpensesByCategory();

@@ -278,9 +278,7 @@ class FormFieldCategorySelector extends StatelessWidget {
                                   height: 36,
                                 ),
                                 const SizedBox(height: 4),
-                                Text(
-                                  item.name,
-                                ),
+                                Text(item.name),
                               ],
                             ),
                           );

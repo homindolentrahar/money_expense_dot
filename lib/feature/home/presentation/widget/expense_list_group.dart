@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:money_expense_dot/feature/home/domain/model/expense_with_category_model.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_list_item.dart';
 import 'package:money_expense_dot/util/extension/datetime_ext.dart';
@@ -57,6 +58,13 @@ class ExpenseListGroup extends StatelessWidget {
               separatorBuilder: (_, index) => const SizedBox(height: 20),
               itemBuilder: (ctx, index) => ExpenseListItem(
                 data: expenses[index],
+                onPressed: (value) {
+                  context.pushNamed(
+                    "detail",
+                    pathParameters: {'id': value.expense.id?.toString() ?? ""},
+                    extra: value,
+                  );
+                },
               ),
             ),
           ],

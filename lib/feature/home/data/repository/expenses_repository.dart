@@ -92,8 +92,6 @@ class ExpensesRepository implements IExpenseRepository {
               (previousValue, element) => previousValue += element.amount,
             );
 
-        log("Daily: $monthly");
-
         return right<String, Map<String, double>>({
           'daily': daily,
           'monthly': monthly,
@@ -138,6 +136,48 @@ class ExpensesRepository implements IExpenseRepository {
       },
     ).onErrorReturnWith(
       (error, stackTrace) {
+        return left(error.toString());
+      },
+    );
+  }
+
+  @override
+  Stream<Either<String, ExpenseWithCategoryModel>> watchSingleExpense(
+    int id,
+  ) async* {
+    final query = database.select(database.expenses).join([
+      leftOuterJoin(
+        database.categories,
+        database.expenses.category.equalsExp(database.categories.slug),
+      )
+    ])
+      ..where(database.expenses.id.equals(id));
+
+    yield* query.watchSingle().map(
+      (rows) {
+        final ExpenseWithCategoryModel data = ExpenseWithCategoryModel(
+          expense: ExpenseModel(
+            id: rows.rawData.data['expenses.id'],
+            name: rows.rawData.data['expenses.name'],
+            category: rows.rawData.data['expenses.category'],
+            amount: rows.rawData.data['expenses.amount'],
+            expensedAt:
+                DateTime.parse(rows.rawData.data['expenses.expensed_at'])
+                    .toLocal(),
+          ),
+          category: CategoryModel(
+            icon: rows.rawData.data['categories.icon'],
+            outIcon: rows.rawData.data['categories.out_icon'],
+            slug: rows.rawData.data['categories.slug'],
+            name: rows.rawData.data['categories.name'],
+          ),
+        );
+
+        return right<String, ExpenseWithCategoryModel>(data);
+      },
+    ).onErrorReturnWith(
+      (error, stackTrace) {
+        log("Error: ${error.toString()}");
         return left(error.toString());
       },
     );

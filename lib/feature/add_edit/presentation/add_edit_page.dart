@@ -9,14 +9,16 @@ import 'package:money_expense_dot/core/presentation/widget/buttons.dart';
 import 'package:money_expense_dot/core/presentation/widget/form_fields.dart';
 import 'package:money_expense_dot/feature/add_edit/presentation/bloc/add_edit_cubit.dart';
 import 'package:money_expense_dot/feature/add_edit/presentation/bloc/add_edit_state.dart';
+import 'package:money_expense_dot/feature/home/domain/model/expense_with_category_model.dart';
+import 'package:money_expense_dot/util/extension/double_ext.dart';
 import 'package:money_expense_dot/util/extension/string_ext.dart';
 
 class AddEditPage extends StatelessWidget {
   const AddEditPage._();
 
-  static Widget getPage() {
+  static Widget getPage({ExpenseWithCategoryModel? data}) {
     return BlocProvider(
-      create: (_) => AddEditCubit(),
+      create: (_) => AddEditCubit(initialData: data),
       child: const AddEditPage._(),
     );
   }
@@ -27,84 +29,101 @@ class AddEditPage extends StatelessWidget {
       bloc: context.read<AddEditCubit>(),
       listener: (_, state) {
         if (state.status == BaseStatus.loading) {
-          EasyLoading.show(status: "Creating expense...");
+          EasyLoading.show(status: "Processing");
           context.pop();
         } else if (state.status == BaseStatus.success) {
-          EasyLoading.showSuccess("Success creating expense");
+          EasyLoading.showSuccess("Success");
         } else if (state.status == BaseStatus.error) {
-          EasyLoading.showError("Error creating expense");
+          EasyLoading.showError("Error");
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.chevron_left),
-            iconSize: 32,
-            onPressed: () {
-              context.pop();
-            },
-          ),
-          title: const Text("Tambah Pengeluaran Baru"),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: FormBuilder(
-              key: context.read<AddEditCubit>().formKey,
-              onChanged: () {
-                context.read<AddEditCubit>().onFormChanged();
+      child: BlocBuilder<AddEditCubit, AddEditState>(builder: (_, state) {
+        return Scaffold(
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.chevron_left),
+              iconSize: 32,
+              onPressed: () {
+                context.pop();
               },
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const FormFieldText(
-                    name: "name",
-                    hint: "Nama Pengeluaran",
-                    action: TextInputAction.next,
-                  ),
-                  const SizedBox(height: 20),
-                  const FormFieldCategorySelector(
-                    name: "category",
-                  ),
-                  const SizedBox(height: 20),
-                  const FormFieldDatePicker(
-                    name: "expensed_at",
-                    hint: "Tanggal Pengeluaran",
-                  ),
-                  const SizedBox(height: 20),
-                  FormFieldText(
-                    name: "amount",
-                    hint: "Nominal",
-                    keyboardType: TextInputType.number,
-                    action: TextInputAction.done,
-                    valueTransformer: (value) => value?.currencyInput,
-                    inputFormatters: [
-                      CurrencyInputFormatter(
-                        leadingSymbol: "Rp ",
-                        thousandSeparator: ThousandSeparator.Period,
-                        mantissaLength: 0,
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 32),
-                  BlocBuilder<AddEditCubit, AddEditState>(
-                    builder: (ctx, state) {
-                      return AppPrimaryButton(
-                        isEnabled: state.isFormValid,
-                        title: "Simpan",
-                        onPressed: () {
-                          context.read<AddEditCubit>().submit();
-                        },
-                      );
-                    },
-                  ),
-                ],
+            ),
+            title: Text(
+              state.data != null
+                  ? "Update Pengeluaran"
+                  : "Tambah Pengeluaran Baru",
+            ),
+            actions: state.data == null
+                ? null
+                : [
+                    IconButton(
+                      icon: Icon(Icons.delete,
+                          color: Theme.of(context).colorScheme.error),
+                      onPressed: () {
+                        context.read<AddEditCubit>().delete();
+                      },
+                    ),
+                  ],
+          ),
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(20),
+              child: FormBuilder(
+                key: context.read<AddEditCubit>().formKey,
+                onChanged: () {
+                  context.read<AddEditCubit>().onFormChanged();
+                },
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FormFieldText(
+                      initialValue: state.data?.expense.name,
+                      name: "name",
+                      hint: "Nama Pengeluaran",
+                      action: TextInputAction.next,
+                    ),
+                    const SizedBox(height: 20),
+                    FormFieldCategorySelector(
+                      initialValue: state.data?.category,
+                      name: "category",
+                    ),
+                    const SizedBox(height: 20),
+                    FormFieldDatePicker(
+                      initialValue: state.data?.expense.expensedAt,
+                      name: "expensed_at",
+                      hint: "Tanggal Pengeluaran",
+                    ),
+                    const SizedBox(height: 20),
+                    FormFieldText(
+                      initialValue: state.data?.expense.amount.formatCurrency(),
+                      name: "amount",
+                      hint: "Nominal",
+                      keyboardType: TextInputType.number,
+                      action: TextInputAction.done,
+                      valueTransformer: (value) => value?.currencyInput,
+                      inputFormatters: [
+                        CurrencyInputFormatter(
+                          leadingSymbol: "Rp ",
+                          thousandSeparator: ThousandSeparator.Period,
+                          mantissaLength: 0,
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 32),
+                    AppPrimaryButton(
+                      isEnabled: state.isFormValid,
+                      title: "Simpan",
+                      onPressed: () {
+                        context.read<AddEditCubit>().submit();
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }

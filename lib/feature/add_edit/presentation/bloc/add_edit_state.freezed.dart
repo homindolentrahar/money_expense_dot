@@ -16,7 +16,7 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$AddEditState {
-  ExpenseModel? get data => throw _privateConstructorUsedError;
+  ExpenseWithCategoryModel? get data => throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
   bool get isFormValid => throw _privateConstructorUsedError;
   BaseStatus get status => throw _privateConstructorUsedError;
@@ -33,7 +33,7 @@ abstract class $AddEditStateCopyWith<$Res> {
       _$AddEditStateCopyWithImpl<$Res, AddEditState>;
   @useResult
   $Res call(
-      {ExpenseModel? data,
+      {ExpenseWithCategoryModel? data,
       String message,
       bool isFormValid,
       BaseStatus status});
@@ -61,7 +61,7 @@ class _$AddEditStateCopyWithImpl<$Res, $Val extends AddEditState>
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as ExpenseModel?,
+              as ExpenseWithCategoryModel?,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -87,7 +87,7 @@ abstract class _$$AddEditStateImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {ExpenseModel? data,
+      {ExpenseWithCategoryModel? data,
       String message,
       bool isFormValid,
       BaseStatus status});
@@ -113,7 +113,7 @@ class __$$AddEditStateImplCopyWithImpl<$Res>
       data: freezed == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
-              as ExpenseModel?,
+              as ExpenseWithCategoryModel?,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -141,7 +141,7 @@ class _$AddEditStateImpl with DiagnosticableTreeMixin implements _AddEditState {
 
   @override
   @JsonKey()
-  final ExpenseModel? data;
+  final ExpenseWithCategoryModel? data;
   @override
   @JsonKey()
   final String message;
@@ -193,13 +193,13 @@ class _$AddEditStateImpl with DiagnosticableTreeMixin implements _AddEditState {
 
 abstract class _AddEditState implements AddEditState {
   const factory _AddEditState(
-      {final ExpenseModel? data,
+      {final ExpenseWithCategoryModel? data,
       final String message,
       final bool isFormValid,
       final BaseStatus status}) = _$AddEditStateImpl;
 
   @override
-  ExpenseModel? get data;
+  ExpenseWithCategoryModel? get data;
   @override
   String get message;
   @override

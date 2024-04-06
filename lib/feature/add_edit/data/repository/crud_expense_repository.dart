@@ -31,15 +31,40 @@ class CrudExpenseRepository implements ICrudExpenseRepository {
   }
 
   @override
-  Future<Either<String, Unit>> deleteExpense(int id) {
-    throw UnimplementedError();
+  Future<Either<String, Unit>> deleteExpense(int id) async {
+    try {
+      await (database.delete(database.expenses)
+            ..where((tbl) => tbl.id.equals(id)))
+          .go();
+
+      return right(unit);
+    } catch (e) {
+      log("Error: ${e.toString()}");
+      return left(e.toString());
+    }
   }
 
   @override
   Future<Either<String, Unit>> updateExpense({
     required int id,
     required ExpenseModel data,
-  }) {
-    throw UnimplementedError();
+  }) async {
+    try {
+      final companion = ExpensesCompanion(
+        name: Value(data.name),
+        amount: Value(data.amount),
+        expensedAt: Value(data.expensedAt),
+        category: Value(data.category),
+      );
+
+      await (database.update(database.expenses)
+            ..where((tbl) => tbl.id.equals(id)))
+          .write(companion);
+
+      return right(unit);
+    } catch (e) {
+      log("Error: ${e.toString()}");
+      return left(e.toString());
+    }
   }
 }
