@@ -9,6 +9,7 @@ import 'package:money_expense_dot/core/presentation/widget/buttons.dart';
 import 'package:money_expense_dot/core/presentation/widget/form_fields.dart';
 import 'package:money_expense_dot/feature/add_edit/presentation/bloc/add_edit_cubit.dart';
 import 'package:money_expense_dot/feature/add_edit/presentation/bloc/add_edit_state.dart';
+import 'package:money_expense_dot/feature/add_edit/presentation/bloc/categories_cubit.dart';
 import 'package:money_expense_dot/feature/home/domain/model/expense_with_category_model.dart';
 import 'package:money_expense_dot/util/extension/double_ext.dart';
 import 'package:money_expense_dot/util/extension/string_ext.dart';
@@ -17,8 +18,15 @@ class AddEditPage extends StatelessWidget {
   const AddEditPage._();
 
   static Widget getPage({ExpenseWithCategoryModel? data}) {
-    return BlocProvider(
-      create: (_) => AddEditCubit(initialData: data),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => AddEditCubit(initialData: data),
+        ),
+        BlocProvider(
+          create: (_) => CategoriesCubit(),
+        ),
+      ],
       child: const AddEditPage._(),
     );
   }
