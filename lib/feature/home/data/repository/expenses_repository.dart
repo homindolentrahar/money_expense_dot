@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:collection/collection.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:dartz/dartz.dart';
@@ -65,5 +64,50 @@ class ExpensesRepository implements IExpenseRepository {
         return left(error.toString());
       },
     );
+  }
+
+  @override
+  Stream<Either<String, Map<String, double>>>
+      watchDailyMonthlyExpenses() async* {
+    final current = DateTime.now();
+    final query = database.select(database.expenses);
+    final today = DateTime(current.year, current.month, current.day);
+    final thisMonth = DateTime(current.year, current.month);
+
+    yield* query.watch().map(
+      (rows) {
+        final daily = rows.where((e) => e.expensedAt == today).fold(
+              0.0,
+              (previousValue, element) => previousValue += element.amount,
+            );
+        final monthly = rows
+            .where(
+              (e) =>
+                  e.expensedAt.year == thisMonth.year &&
+                  e.expensedAt.month == thisMonth.month,
+            )
+            .fold(
+              0.0,
+              (previousValue, element) => previousValue += element.amount,
+            );
+
+        log("Daily: $monthly");
+
+        return right<String, Map<String, double>>({
+          'daily': daily,
+          'monthly': monthly,
+        });
+      },
+    ).onErrorReturnWith(
+      (error, stackTrace) {
+        return left(error.toString());
+      },
+    );
+  }
+
+  @override
+  Stream<Either<String, Map<CategoryModel, double>>> watchExpensesByCategory() {
+    // TODO: implement watchExpensesByCategory
+    throw UnimplementedError();
   }
 }

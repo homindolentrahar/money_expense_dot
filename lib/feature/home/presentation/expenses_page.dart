@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:money_expense_dot/core/domain/model/category_model.dart';
+import 'package:money_expense_dot/feature/home/presentation/bloc/daily_monthly_expenses_cubit.dart';
+import 'package:money_expense_dot/feature/home/presentation/bloc/daily_monthly_expenses_state.dart';
 import 'package:money_expense_dot/feature/home/presentation/bloc/expenses_cubit.dart';
 import 'package:money_expense_dot/feature/home/presentation/bloc/expenses_state.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_banner_item.dart';
@@ -14,8 +16,11 @@ class ExpensesPage extends StatelessWidget {
   const ExpensesPage._();
 
   static Widget getPage() {
-    return BlocProvider(
-      create: (_) => ExpensesCubit(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => ExpensesCubit()),
+        BlocProvider(create: (_) => DailyMonthlyExpensesCubit()),
+      ],
       child: const ExpensesPage._(),
     );
   }
@@ -53,22 +58,38 @@ class ExpensesPage extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(height: 20),
-                    const Row(
-                      children: [
-                        Expanded(
-                          child: ExpenseBannerItem(
-                            expenseType: ExpenseBannerType.daily,
-                            expenseAmount: 10000,
+                    BlocBuilder<DailyMonthlyExpensesCubit,
+                        DailyMonthlyExpensesState>(
+                      builder: (_, state) {
+                        return state.maybeWhen(
+                          success: (data) {
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: ExpenseBannerItem(
+                                    expenseType: ExpenseBannerType.daily,
+                                    expenseAmount: data['daily'] ?? 0,
+                                  ),
+                                ),
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: ExpenseBannerItem(
+                                    expenseType: ExpenseBannerType.monthly,
+                                    expenseAmount: data['monthly'] ?? 0,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                          orElse: () => const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              CircularProgressIndicator(),
+                              CircularProgressIndicator(),
+                            ],
                           ),
-                        ),
-                        SizedBox(width: 20),
-                        Expanded(
-                          child: ExpenseBannerItem(
-                            expenseType: ExpenseBannerType.monthly,
-                            expenseAmount: 200000,
-                          ),
-                        ),
-                      ],
+                        );
+                      },
                     ),
                     const SizedBox(height: 20),
                     Text(

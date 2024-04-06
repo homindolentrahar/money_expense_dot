@@ -3,8 +3,8 @@ import 'package:money_expense_dot/core/presentation/app_color.dart';
 import 'package:money_expense_dot/util/extension/double_ext.dart';
 
 enum ExpenseBannerType {
-  monthly("Pengeluaranmu hari ini"),
-  daily("Pengeluaranmu bulan ini");
+  monthly("Pengeluaranmu bulan ini"),
+  daily("Pengeluaranmu hari ini");
 
   final String title;
 
