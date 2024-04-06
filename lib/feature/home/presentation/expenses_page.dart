@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:money_expense_dot/core/domain/model/category_model.dart';
 import 'package:money_expense_dot/feature/home/presentation/bloc/daily_monthly_expenses_cubit.dart';
 import 'package:money_expense_dot/feature/home/presentation/bloc/daily_monthly_expenses_state.dart';
+import 'package:money_expense_dot/feature/home/presentation/bloc/expenses_by_category_cubit.dart';
+import 'package:money_expense_dot/feature/home/presentation/bloc/expenses_by_category_state.dart';
 import 'package:money_expense_dot/feature/home/presentation/bloc/expenses_cubit.dart';
 import 'package:money_expense_dot/feature/home/presentation/bloc/expenses_state.dart';
 import 'package:money_expense_dot/feature/home/presentation/widget/expense_banner_item.dart';
@@ -20,6 +21,7 @@ class ExpensesPage extends StatelessWidget {
       providers: [
         BlocProvider(create: (_) => ExpensesCubit()),
         BlocProvider(create: (_) => DailyMonthlyExpensesCubit()),
+        BlocProvider(create: (_) => ExpensesByCategoryCubit()),
       ],
       child: const ExpensesPage._(),
     );
@@ -99,23 +101,31 @@ class ExpensesPage extends StatelessWidget {
                   ],
                 ),
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.all(20).copyWith(bottom: 28),
-                child: Wrap(
-                  direction: Axis.horizontal,
-                  spacing: 20,
-                  children: List.generate(
-                    CategoryConstant.categories.length,
-                    (index) {
-                      return ExpenseCategoryItem(
-                        amount: 100000,
-                        category: CategoryConstant.categories[index],
-                      );
-                    },
+              BlocBuilder<ExpensesByCategoryCubit, ExpensesByCategoryState>(
+                  builder: (_, state) {
+                return state.maybeWhen(
+                  orElse: () => const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                ),
-              ),
+                  success: (data) => SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.all(20).copyWith(bottom: 28),
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      spacing: 20,
+                      children: List.generate(
+                        data.length,
+                        (index) {
+                          return ExpenseCategoryItem(
+                            amount: data.values.toList()[index],
+                            category: data.keys.toList()[index],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }),
               BlocBuilder<ExpensesCubit, ExpensesState>(
                 builder: (_, state) {
                   return state.maybeWhen(

@@ -70,9 +70,10 @@ class ExpensesRepository implements IExpenseRepository {
   Stream<Either<String, Map<String, double>>>
       watchDailyMonthlyExpenses() async* {
     final current = DateTime.now();
-    final query = database.select(database.expenses);
     final today = DateTime(current.year, current.month, current.day);
     final thisMonth = DateTime(current.year, current.month);
+
+    final query = database.select(database.expenses);
 
     yield* query.watch().map(
       (rows) {
@@ -106,8 +107,39 @@ class ExpensesRepository implements IExpenseRepository {
   }
 
   @override
-  Stream<Either<String, Map<CategoryModel, double>>> watchExpensesByCategory() {
-    // TODO: implement watchExpensesByCategory
-    throw UnimplementedError();
+  Stream<Either<String, Map<CategoryModel, double>>>
+      watchExpensesByCategory() async* {
+    final sumAmount = database.expenses.amount.sum();
+    final query = database.select(database.categories).join([
+      leftOuterJoin(
+        database.expenses,
+        database.categories.slug.equalsExp(database.expenses.category),
+      )
+    ])
+      ..groupBy([database.categories.slug])
+      ..addColumns([sumAmount]);
+
+    yield* query.watch().map(
+      (rows) {
+        final Map<CategoryModel, double> data = rows.asMap().map(
+          (key, value) {
+            return MapEntry(
+              CategoryModel(
+                icon: value.rawData.data['categories.icon'],
+                outIcon: value.rawData.data['categories.out_icon'],
+                slug: value.rawData.data['categories.slug'],
+                name: value.rawData.data['categories.name'],
+              ),
+              value.read(sumAmount) ?? 0.0,
+            );
+          },
+        );
+        return right<String, Map<CategoryModel, double>>(data);
+      },
+    ).onErrorReturnWith(
+      (error, stackTrace) {
+        return left(error.toString());
+      },
+    );
   }
 }
